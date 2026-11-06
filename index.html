@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; worker-src 'self'; manifest-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
+  <meta name="theme-color" content="#0a1614">
+  <title>iCare Local AI | Private progress notes</title>
+  <meta name="description" content="Offline-first, human-reviewed support-worker progress note drafting. Prototype: fictional data only.">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">i<span>✳</span></div>
+      <div><strong>iCare <em>Local AI</em></strong><small>DE-OMEGA-POINT · CARE DOCUMENTATION LAB</small></div></div>
+    <div class="header-badges"><span class="tag tag-success" id="engineStatus">LOCAL CLASSIFIER READY</span><span class="tag" id="networkStatus">CHECKING NETWORK</span></div>
+  </header>
+  <div class="demo-bar" role="note">PROTOTYPE / SYNTHETIC DATA ONLY · Not approved for real participant records or clinical decisions.</div>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">PRIVACY BY DEFAULT · HUMAN AGENCY IS PRIME</p><h1>Clear notes. <span>Human control.</span></h1>
+      <p class="lede">Turn rough shift observations into ten structured, editable dot-point sections. Your device processes the text. You decide what goes into the official record.</p></div>
+      <div class="privacy-card"><span aria-hidden="true" class="privacy-icon">✳</span><strong>Nothing saved by this app</strong><span>Text stays in this session. No analytics, accounts, uploads or external AI calls.</span></div>
+    </section>
+    <section class="workflow" aria-label="Workflow">
+      <span class="step current">01 <b>Enter</b></span><span aria-hidden="true">→</span>
+      <span class="step">02 <b>Generate</b></span><span aria-hidden="true">→</span>
+      <span class="step">03 <b>Review</b></span><span aria-hidden="true">→</span>
+      <span class="step">04 <b>Copy + Clear</b></span>
+    </section>
+    <div class="workspace">
+      <section class="panel input-panel" aria-labelledby="inputTitle">
+        <div class="panel-title"><div><p class="eyebrow">01 / RAW OBSERVATIONS</p><h2 id="inputTitle">Shift input</h2></div><span class="quiet">Session only</span></div>
+        <form id="entryForm" autocomplete="off" novalidate>
+          <div class="fields"><label>Participant name (if needed)<input id="participant" maxlength="120" autocomplete="off" spellcheck="false" placeholder="Use fictional name during testing"></label>
+          <label>Shift date (optional)<input id="shiftDate" type="date" autocomplete="off"></label></div>
+          <label class="note-label" for="sourceText">What happened during the shift?</label>
+          <textarea id="sourceText" rows="11" maxlength="14000" spellcheck="false" autocomplete="off" placeholder="Example using fictional details:&#10;Jordan remained home with the flu.&#10;Jordan declined exercises.&#10;Jordan prepared breakfast and washed dishes.&#10;SW assisted Jordan with drying dishes."></textarea>
+          <div class="field-meta"><span>Write what was actually observed. Avoid unsupported conclusions.</span><span id="charCount">0 / 14,000</span></div>
+          <div class="input-actions"><button class="btn btn-primary" type="submit" id="generateBtn">✳ Generate dot-point notes</button><button class="btn btn-subtle" type="button" id="exampleBtn">Use fictional example</button></div>
+          <p class="model-disclosure" id="methodDisclosure">Processing: local trained text classifier + safety rules, not a generative language model. Phrasing is kept close to source for factual safety.</p>
+        </form>
+      </section>
+      <section class="panel result-panel" aria-labelledby="resultTitle">
+        <div class="panel-title"><div><p class="eyebrow">02 / STRUCTURED DOCUMENTATION</p><h2 id="resultTitle">Progress notes</h2></div><div class="meta-controls"><label for="bulletStyle" class="visually-hidden">Bullet style</label><select id="bulletStyle"><option value="•">• Bullets</option><option value="-">- Hyphens</option></select></div></div>
+        <div id="emptyState" class="empty-state"><div class="empty-art" aria-hidden="true">≡<span>✳</span></div><strong>Your structured note appears here</strong><p>All ten headings are prepared in the correct order. Review and edit every statement before copying.</p></div>
+        <div id="results" hidden></div>
+      </section>
+    </div>
+    <section class="review-panel" id="reviewPanel" hidden aria-label="Review and copy">
+      <div class="review-top"><div><p class="eyebrow">03 / HUMAN REVIEW</p><h2>Accuracy review</h2><p>Each generated statement links back to its source. Automated checks cannot guarantee accuracy.</p></div><span class="tag tag-review" id="reviewStatus">REVIEW REQUIRED</span></div>
+      <div id="warnings" class="warnings" role="status" aria-live="polite"></div>
+      <label class="checkline"><input type="checkbox" id="reviewConfirm"><span>I compared the note with my original observations, corrected any inaccuracies and confirm it is suitable for the intended record.</span></label>
+      <div class="review-actions"><button id="copyAll" class="btn btn-primary" type="button" disabled>Copy complete note</button><button id="clearAll" class="btn btn-danger" type="button">Clear session</button></div>
+      <p class="clipboard-note">Copying uses the device clipboard, which may remain available to other apps or synced devices. Paste only into your authorised iCare system, then follow your organisation's clipboard practices.</p>
+    </section>
+    <footer><span>iCare Local AI · v0.1 prototype · Model: synthetic-trained Naïve Bayes + evidence rules</span><span>No official iCare integration · No permanent records</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
