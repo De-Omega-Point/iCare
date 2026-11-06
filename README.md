@@ -7,7 +7,7 @@ Standalone, offline-first documentation assistant from De-Omega-Point. Intended 
 ## What works
 
 - Fixed 10-section iCare template, uppercase headings, editable dot points and `Nil.` for missing categories.
-- **Actual on-device machine learning:** dependency-free multinomial Naïve Bayes text classifier, trained at app startup on 100 fictional examples, plus explicit safety classification rules. This is a *classifier*, **not a generative LLM**.
+- **Actual on-device machine learning:** dependency-free multinomial Naïve Bayes text classifier, trained at app startup on 92 fictional examples, plus explicit safety classification rules. This is a *classifier*, **not a generative LLM**.
 - Conservative source-preserving text formatting, source spans, duplicate suppression, choice/refusal safeguards, medication/incident process flags, and warnings for manual edits.
 - Requires positive human review before enabling section/full-note clipboard copying.
 - No sign-in, no participant database, no network inference, no analytics, no text autosave. Service worker caches only publicly available application files. `connect-src 'none'` in CSP.
