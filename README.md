@@ -1,4 +1,4 @@
-# iCare Local AI · Simple conversation prototype v0.2
+# iCare Local AI · Simple conversation prototype v0.3
 
 **Status: DEVELOPMENT ONLY. Fictional test data ONLY. NOT approved for real participant records.**
 
@@ -6,7 +6,7 @@
 
 **Type shift notes → Generate → Review/edit → Copy → Paste into authorised iCare → New note (clear).**
 
-The user experience is intentionally close to a simple chat composer: one entry box at the bottom, the user's input in a bubble and one clean reply. No dashboard, logins, sidebars, databases or configuration panels. An expanded accuracy trace is optional. A positive human-review checkbox remains compulsory before copying.
+The interface is a minimal chat window with one input at the bottom, a clearly labelled Send button, the user's message bubble and one clean assistant reply. **Enter sends; Shift+Enter adds a new line.** On supported mobile keyboards the return key is labelled Send. No dashboard, logins, sidebars, databases or configuration panels. An expanded accuracy trace is optional. A positive human-review checkbox remains compulsory before copying.
 
 ### Try it
 

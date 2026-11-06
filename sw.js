@@ -1,5 +1,5 @@
 /* Static shell only: participant input/output is never received, stored or cached. */
-const CACHE = 'icare-static-v0.2.0';
+const CACHE = 'icare-static-v0.3.0';
 const STATIC = ['./','./index.html','./styles.css','./app.mjs','./engine.mjs','./icon.svg','./manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(STATIC)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([

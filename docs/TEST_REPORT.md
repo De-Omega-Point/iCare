@@ -25,3 +25,11 @@
 | Generative LLM benchmark | **Not done** | The integrated AI is a local text classifier, not a generative LLM |
 
 No production readiness is claimed. Follow the original specifications and organisational authorisation requirements before real data is used.
+
+## v0.3 chat interface regression checks
+
+- Visible Send button adjacent to bottom composer, including on mobile.
+- `enterkeyhint="send"` guides supported on-screen keyboards.
+- Enter sends on touch and desktop keyboards; Shift+Enter inserts a new line.
+- No change to classifier, ten-heading template, mandatory review, or offline-only data handling.
+- See reproducible browser test suite; device-specific keyboard and offline behaviour remain release gates.

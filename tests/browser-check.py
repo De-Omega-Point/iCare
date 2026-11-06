@@ -35,7 +35,12 @@ with sync_playwright() as p:
     results['send_disabled_without_input']=page.locator('#generateBtn').is_disabled()
     page.locator('#exampleBtn').click()
     results['fictional_sample']= 'Avery (fictional)' in page.locator('#sourceText').input_value()
-    page.locator('#generateBtn').click()
+    results['visible_send_button']=page.locator('#generateBtn').is_visible() and 'Send' in page.locator('#generateBtn').inner_text()
+    results['mobile_keyboard_hint']=page.locator('#sourceText').get_attribute('enterkeyhint')=='send'
+    page.locator('#sourceText').press('Shift+Enter')
+    results['shift_enter_newline']=page.locator('#sourceText').input_value().endswith('\n')
+    page.locator('#sourceText').press('Enter')
+    results['enter_sends_message']=page.locator('#thread').is_visible() and page.locator('#sourceText').input_value()==''
     results['chat_layout']= page.locator('#thread').is_visible() and page.locator('.user-bubble').is_visible() and page.locator('.assistant-turn').is_visible()
     results['ten_sections']=page.locator('.note-section').count()==10
     results['name_from_explicit_label']= 'Avery (fictional)' in page.locator('.note-section').first.inner_text()
@@ -63,11 +68,15 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':390,'height':844})
     page.screenshot(path='/mnt/data/icare-chat-mobile-welcome.png',full_page=True)
     page.locator('#exampleBtn').click()
-    page.locator('#generateBtn').click()
+    # Test touch-style settings: Enter must still send, unlike the earlier pointer:fine-only handler.
+    page.evaluate("window.matchMedia = () => ({matches:false})")
+    page.locator('#sourceText').press('Enter')
+    results['touch_style_enter_sends']=page.locator('#thread').is_visible()
     page.evaluate("document.getElementById('conversationStage').scrollTop=0")
     page.screenshot(path='/mnt/data/icare-chat-mobile-note.png',full_page=True)
     results['mobile_no_horizontal_overflow']=page.evaluate('document.documentElement.scrollWidth <= window.innerWidth + 1')
     results['mobile_sections']=page.locator('.note-section').count()==10
+    results['mobile_send_visible']=page.locator('#generateBtn').is_visible()
     results['no_js_errors']=not errors
     browser.close()
 print(json.dumps({'results':results,'passed':sum(results.values()),'total':len(results),'errors':errors,'limits':'In-memory Chromium; actual PWA offline and OS clipboard remain device testing gates'},indent=2))
