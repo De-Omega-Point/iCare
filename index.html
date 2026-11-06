@@ -20,20 +20,20 @@
       <div class="brand" aria-label="iCare Local AI">
         <span class="brand-icon" aria-hidden="true">✳</span>
         <span class="brand-title">iCare <strong>Local AI</strong></span>
-        <span class="prototype-chip">Prototype</span>
+        
       </div>
       <div class="top-actions">
-        <span id="connectionStatus" class="connection-status">On-device</span>
-        <button id="newNoteBtn" class="new-note-btn" type="button" title="Clear this note and start again">+ New note</button>
+        <span id="connectionStatus" class="connection-status">Local</span>
+        <button id="newNoteBtn" class="new-note-btn" type="button" title="Clear this note and start again"><span aria-hidden="true">＋</span> New chat</button>
       </div>
     </header>
-    <div class="safety-ribbon" role="note">Fictional examples only. Not approved for real participant records.</div>
+    <div class="safety-ribbon" role="note">Prototype · Fictional data only · Not approved for participant records</div>
 
     <main id="conversationStage" class="conversation-stage">
       <section id="welcome" class="welcome" aria-label="Start a note">
         <div class="welcome-mark" aria-hidden="true">✳</div>
         <h1>What happened during your shift?</h1>
-        <p>Type your notes naturally. I'll organise them into the ten iCare headings, ready for you to review and copy.</p>
+        <p>Describe the shift. I’ll format your notes into dot points.</p>
         <button id="exampleBtn" class="example-btn" type="button">Try a fictional example <span aria-hidden="true">↗</span></button>
       </section>
 
@@ -43,7 +43,7 @@
           <span class="assistant-icon" aria-hidden="true">✳</span>
           <div class="assistant-content">
             <div class="response-title"><h2>Progress note</h2><span>Draft · local</span></div>
-            <p class="response-lede">Here’s your note, in dot points. Please check each statement against your original observations.</p>
+            <p class="response-lede">Here are your iCare dot points. Check them before copying.</p>
             <div id="noteBody" class="note-body" aria-label="Ten editable progress-note sections"></div>
             <details id="accuracyDetails" class="accuracy-details">
               <summary><span aria-hidden="true">✓</span> <span id="accuracyTitle">Review accuracy</span><span class="disclosure-chevron" aria-hidden="true">⌄</span></summary>
@@ -65,13 +65,10 @@
     <div class="composer-wrap">
       <form id="entryForm" class="composer" autocomplete="off" novalidate>
         <label class="sr-only" for="sourceText">Write your shift notes</label>
-        <textarea id="sourceText" rows="2" maxlength="14000" spellcheck="false" autocomplete="off" placeholder="Write your shift notes here…"></textarea>
-        <div class="composer-tools">
-          <span class="composer-help">Tip: Start with “Name: Avery” if needed.</span>
-          <button id="generateBtn" class="send-btn" type="submit" aria-label="Generate progress note" title="Generate progress note" disabled><span aria-hidden="true">↑</span></button>
-        </div>
+        <textarea id="sourceText" rows="1" maxlength="14000" spellcheck="false" autocomplete="off" enterkeyhint="send" aria-describedby="sendHint" placeholder="Message iCare Local AI…"></textarea>
+        <button id="generateBtn" class="send-btn" type="submit" aria-label="Send shift notes" title="Send (Enter)" disabled><span class="send-icon" aria-hidden="true">↑</span><span>Send</span></button>
       </form>
-      <p class="privacy-foot">Processed on this device. No note storage or cloud AI. Copy only into your authorised care system.</p>
+      <div class="composer-footer"><span id="sendHint">Enter to send · Shift+Enter for a new line</span><span class="privacy-foot">On-device · No note storage</span></div>
     </div>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

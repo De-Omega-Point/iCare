@@ -122,3 +122,42 @@ button:focus-visible,textarea:focus-visible,summary:focus-visible,.point-text:fo
  .review-confirm{font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+/* v0.3: a clean, recognisable chat window and an explicit Send action. */
+.topbar{height:58px}
+.safety-ribbon{padding:6px 12px}
+.brand{gap:9px}
+.brand-icon{background:transparent;width:27px;height:27px;font-size:27px}
+.new-note-btn{padding:8px 13px}
+.welcome{padding-top:16px;padding-bottom:20px}
+.welcome h1{font-size:clamp(26px,4vw,34px);margin-bottom:9px}
+.welcome p{font-size:15px}
+.welcome-mark{font-size:35px;margin-bottom:17px}
+.thread{width:min(100%,760px)}
+.user-turn{margin:10px 0 22px}
+.user-bubble{background:#f2f3f4;padding:13px 17px;border-radius:20px 20px 6px 20px}
+.assistant-turn{grid-template-columns:29px minmax(0,1fr);gap:9px;margin-top:14px}
+.assistant-icon{width:28px;height:28px;font-size:19px}
+.assistant-content{background:#fff;border:1px solid #edf0ed;border-radius:18px;padding:17px 19px 7px;box-shadow:0 2px 12px rgba(0,0,0,.024)}
+.response-lede{margin-bottom:21px}
+.composer-wrap{padding:12px 20px max(12px,env(safe-area-inset-bottom))}
+.composer{display:flex;align-items:flex-end;gap:8px;padding:7px 8px 7px 16px;border-radius:24px;box-shadow:0 3px 22px rgba(0,0,0,.07)}
+.composer textarea{flex:1;min-width:0;min-height:42px;max-height:180px;padding:10px 4px 8px;line-height:1.5;font-size:15px}
+.send-btn{height:42px;min-width:91px;border-radius:17px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;font-size:14px;font-weight:700}
+.send-icon{font-size:22px;font-weight:600;line-height:1}
+.send-btn:disabled{background:#e6e9e6;color:#88938a;cursor:not-allowed}
+.composer-footer{max-width:805px;margin:8px auto 0;display:flex;justify-content:space-between;gap:10px;color:#969d98;font-size:11px;line-height:1.45}
+.composer-footer .privacy-foot{margin:0;max-width:none;text-align:right;font-size:11px;color:#969d98}
+@media (max-width:640px){
+ .topbar{height:55px}
+ .safety-ribbon{font-size:10px}
+ .assistant-turn{grid-template-columns:25px minmax(0,1fr);gap:6px}
+ .assistant-content{border-radius:15px;padding:14px 13px 5px}
+ .composer-wrap{padding:8px 10px max(10px,env(safe-area-inset-bottom))}
+ .composer{border-radius:21px;padding:6px 6px 6px 12px}
+ .composer textarea{min-height:42px;padding:10px 2px 8px}
+ .send-btn{min-width:78px;height:42px;border-radius:16px;padding:0 11px;font-size:13px;gap:5px}
+ .composer-footer{padding:0 4px;font-size:10px;align-items:center}
+ .composer-footer .privacy-foot{font-size:10px}
+ .welcome p{font-size:14px}
+}

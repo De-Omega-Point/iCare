@@ -32,10 +32,10 @@ function notify(text) {
 function refreshSend() {
   send.disabled = !source.value.trim();
   source.style.height = 'auto';
-  source.style.height = Math.min(Math.max(source.scrollHeight, 63), 210) + 'px';
+  source.style.height = Math.min(Math.max(source.scrollHeight, 42), 180) + 'px';
 }
 function updateNetwork() {
-  $('connectionStatus').textContent = navigator.onLine ? 'On-device' : 'Offline';
+  $('connectionStatus').textContent = navigator.onLine ? 'Local' : 'Offline';
 }
 function parseInput(text) {
   // Only explicit labels become the name, to avoid misidentifying an observation.
@@ -227,8 +227,12 @@ function clearSession() {
 form.addEventListener('submit',event=>{event.preventDefault();generate();});
 source.addEventListener('input',refreshSend);
 source.addEventListener('keydown',event=>{
-  if (event.key==='Enter' && !event.shiftKey && !event.isComposing && !event.ctrlKey && !event.altKey) {
-    if (window.matchMedia('(pointer:fine)').matches) { event.preventDefault();generate(); }
+  // Consistent with chat apps: Enter sends on both desktop and mobile hardware keyboards.
+  // Shift+Enter always inserts a line break; composition and modifier shortcuts are untouched.
+  if (event.key === 'Enter' && !event.shiftKey && !event.isComposing &&
+      !event.ctrlKey && !event.altKey && !event.metaKey) {
+    event.preventDefault();
+    generate();
   }
 });
 approve.addEventListener('change',updateApproval);
