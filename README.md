@@ -1,54 +1,55 @@
-# iCare Local AI · Prototype v0.1
+# iCare Local AI · Simple conversation prototype v0.2
 
-**Status:** Development prototype only. **Not approved for real participant data.**
+**Status: DEVELOPMENT ONLY. Fictional test data ONLY. NOT approved for real participant records.**
 
-Standalone, offline-first documentation assistant from De-Omega-Point. Intended workflow: **Enter → Generate → Compare → Edit → Review → Copy → Paste into the authorised main system → Clear**.
+## One-screen workflow
 
-## What works
+**Type shift notes → Generate → Review/edit → Copy → Paste into authorised iCare → New note (clear).**
 
-- Fixed 10-section iCare template, uppercase headings, editable dot points and `Nil.` for missing categories.
-- **Actual on-device machine learning:** dependency-free multinomial Naïve Bayes text classifier, trained at app startup on 92 fictional examples, plus explicit safety classification rules. This is a *classifier*, **not a generative LLM**.
-- Conservative source-preserving text formatting, source spans, duplicate suppression, choice/refusal safeguards, medication/incident process flags, and warnings for manual edits.
-- Requires positive human review before enabling section/full-note clipboard copying.
-- No sign-in, no participant database, no network inference, no analytics, no text autosave. Service worker caches only publicly available application files. `connect-src 'none'` in CSP.
-- Works offline after the static shell has been cached. On first visit, install uses network; model classification thereafter is entirely local.
+The user experience is intentionally close to a simple chat composer: one entry box at the bottom, the user's input in a bubble and one clean reply. No dashboard, logins, sidebars, databases or configuration panels. An expanded accuracy trace is optional. A positive human-review checkbox remains compulsory before copying.
 
-## Run locally
+### Try it
 
-Use a local static HTTPS or localhost server (do not run as `file://`):
+Use a local static web server over `localhost` or HTTPS:
 
 ```sh
 python3 -m http.server 8080
-# open http://localhost:8080/
+# Visit http://localhost:8080/
 ```
 
-For testing:
+Type an explicit name on the first non-empty line if desired:
+
+```
+Name: Avery
+Avery prepared lunch.
+Avery declined to participate in exercises.
+SW prompted Avery to clean the table.
+```
+
+The app generates all ten **fixed** headings: CLIENT NAME, CLIENT SUPPORT, BEHAVIOUR, MEDICAL, HEALTH, COMMUNITY PARTICIPATION, COMMUNICATION, ACTIVE SUPPORT, GOAL, OBSERVATION. All output uses editable dot points; empty sections show `• Nil.`. Unprovided names remain `Nil.` and are flagged for human review. Refusals are preserved without automatically labelling them as problematic behaviour. **Do not infer that Nil means nothing happened.**
+
+## AI disclosure
+
+The local intelligence is a small multinomial Naïve Bayes classifier trained at startup on 92 **fictional** examples, combined with conservative rules and source-preserving formatting. It is *not* a generative LLM and never sends note content to an external inference service. A larger model remains an unapproved evaluation gate.
+
+## Security and limitations
+
+- No persistent app note storage, account, backend, analytics, telemetry or external AI requests; static assets alone are cached for offline reuse. The app cannot protect against all extensions, compromised browsers or device-level capture.
+- Clear removes the app's live state but does not clear the operating system clipboard, browser-managed memory, screenshots or other applications' records.
+- Clipboard copying is only activated after a worker checks the source and confirms review. Edits invalidate approval. The worker remains the authority on what happened.
+- Actual offline reload and clipboard behaviour on macOS Firefox / iPhone Safari require **target-device testing**. GitHub Pages files are only a synthetic-data prototype, not production authorisation.
+- Never enter identifiable client information until employer/provider permission, security review and separate production sign-off are complete.
+
+## Tests
 
 ```sh
-node --test tests/*.test.mjs
+node --test tests/engine.test.mjs
 node tests/benchmark.mjs
+python3 tests/browser-check.py  # requires Playwright + Chromium
 ```
 
-No npm install, hosted model, tracking script, credentials, or backend needed. The browser needs JavaScript enabled.
+See `docs/TEST_REPORT.md` for validation status, and `docs/MVP_SPEC_v1.md` for the unchanged approved behavioural specification.
 
-## Source of truth
+## Repository
 
-See `docs/MVP_SPEC_v1.md` (founder-approved 6 Nov 2026). It requires all ten headings, manual review, local-only processing, zero persistent note storage and approval gates before production.
-
-## Scope boundaries
-
-- The local AI in this release is a small **trained document classifier**, not a language model that generates fresh prose. This is intentional to avoid hallucination when handling care documentation.
-- Automatic factual validation is limited: linking source spans and warning about edits cannot establish truth. Human review is always required.
-- Advanced generative LLM integration (e.g. self-hosted Transformers.js runtime + verified ONNX weights) remains a *separate test gate*, not silently downloaded from a cloud provider. No unverified model or third-party script will be loaded into a note-taking page.
-- No real-user benchmark on target iPhone/Safari or Mac/Firefox yet. Read `docs/TEST_REPORT.md` for reproducible local synthetic results, device and privacy gates still open.
-- No incident-report submission, medication administration charting, clinical advice, provider integrations, account storage or automated posting.
-
-## Local privacy caveats
-
-- Browser tabs and the device's clipboard may be observable by the browser, extensions and other applications, depending on platform settings. `Clear` removes only the live app state; it is not a forensic memory wipe and **cannot clear the OS clipboard**.
-- Avoid real participant details until employer/provider authorisation, target-device assessment, security review and founder approval are documented.
-- The output is a *draft*. `Nil.` means no source information was supplied for that section, not that the participant did not experience an event.
-
-## Repository workflow
-
-All iCare Local AI work belongs to `De-Omega-Point/iCare` only. This prototype is developed on `dev/icare-local-ai-mvp-v1`; `main` remains unchanged until explicitly reviewed and authorised.
+The sole repository for this project is `De-Omega-Point/iCare`. Work is reviewed on `dev/icare-local-ai-mvp-v1`; a deliberately limited static preview lives on `gh-pages`. Neither branch merges into `main` automatically.
