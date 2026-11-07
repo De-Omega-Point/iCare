@@ -1,6 +1,8 @@
 import {generateNotes, SECTION_ORDER, exportAll} from './engine.mjs';
 const input=document.getElementById('input'),output=document.getElementById('output'),status=document.getElementById('status'),copy=document.getElementById('copy');
-let reviewed=false;\nconst flags=document.getElementById('reviewFlags'),items=document.getElementById('reviewItems'),summary=document.getElementById('reviewSummary');\nfunction showWarnings(warnings){items.replaceChildren();flags.hidden=!warnings.length;flags.open=false;summary.textContent=warnings.length?'Review notices ('+warnings.length+')':'Review notices';for(const warning of warnings){const li=document.createElement('li');li.textContent=warning;items.append(li);}}
+let reviewed=false;
+const flags=document.getElementById('reviewFlags'),items=document.getElementById('reviewItems'),summary=document.getElementById('reviewSummary');
+function showWarnings(warnings){items.replaceChildren();flags.hidden=!warnings.length;flags.open=false;summary.textContent=warnings.length?'Review notices ('+warnings.length+')':'Review notices';for(const warning of warnings){const li=document.createElement('li');li.textContent=warning;items.append(li);}}
 function say(s){status.textContent=s;}
 function parse(text){
  const lines=text.replace(/\r\n?/g,'\n').split('\n');
