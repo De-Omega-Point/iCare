@@ -284,7 +284,7 @@ export function generateNotes({participant='',raw=''}={}) {
     if(/\b(?:administered|missed)\b.{0,30}\bmedication\b|\bmedication\b.{0,30}\b(?:administered|missed)\b/i.test(item.source)) {
       warnings.push('Medication-related statement: check the authorised medication documentation process.');
     }
-    if(/\b(?:incident|injur(?:y|ies)|fall|police|ambulance)\b/i.test(item.source)) {
+    if(/\b(?:incident|injur(?:y|ies)|fall|fell|fallen|slipped|tripped|police|ambulance)\b/i.test(item.source)) {
       warnings.push('Potential incident-related statement: check the provider reporting procedure separately.');
     }
   }
