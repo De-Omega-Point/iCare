@@ -151,7 +151,7 @@ export const localModel = trainLocalClassifier();
 // Explicit evidence-based priority rules. These protect against common unsafe
 // classification errors, including turning ordinary refusals into behaviour events.
 const RULES = [
-  ['MEDICAL', /\b(medication|medicines?|tablets?|doses?|pharmacist|prescri(?:bed|ption)|wound dressing|medication chart)\b/i],
+  ['MEDICAL', /\b(medication|medications|medicines?|tablets?|doses?|pharmacist|prescri(?:bed|ption)|wound dressing|medication chart)\b/i],
   ['GOAL', /\b(identified goal|agreed goal|documented goal|stated goal|support plan goal|progress towards .{0,25}goal)\b/i],
   ['ACTIVE SUPPORT', /\b(sw|support worker|staff)\s+(prompted|assisted|encouraged|guided|reminded|supported|offered choices|provided (?:verbal|physical|step.by.step) (?:prompts|assistance|support))\b/i],
   ['ACTIVE SUPPORT', /\b(verbal prompts|physical assistance|step.by.step assistance)\b/i],
@@ -294,10 +294,11 @@ export function generateNotes({participant='',raw=''}={}) {
     for(const item of splitStatements(row.text)) {
     const output=formatSentence(item.source), key=normalized(output);
     if(SECTION_ORDER.includes(output.replace(/[.!?]$/,'').toUpperCase())) continue;
+    if(normalized(output)===normalized(participantName)) continue;
     if(seen.has(key)) {warnings.push('Repeated statement was omitted: '+output);continue;}
     seen.add(key);
     const {primary:decision}=classifySections(item.source);
-    const section=(row.heading && row.heading!=='CLIENT NAME') ? row.heading : decision.section;
+    // Never trust a pasted heading as a classification: old exports may contain\n    // headings and misplaced facts under OBSERVATION. Reclassify each statement.\n    const section=decision.section;
     classificationMethods[decision.method]=(classificationMethods[decision.method]||0)+1;
     sections[section].push({...item,text:output,edited:false,classification:decision});
     if(decision.method==='uncertain-model') warnings.push('Uncertain category (temporarily under CLIENT SUPPORT): '+output+' Review and move if needed.');
