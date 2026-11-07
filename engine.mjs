@@ -159,7 +159,7 @@ const RULES = [
   ['HEALTH', /\b(flu|cold symptoms|fever|unwell|cough|headache|nausea|runny nose|felt tired|pain|fatigue|sick|rested at home|difficulty sleeping)\b/i],
   ['BEHAVIOUR', /\b(shouted|agitat(?:ed|ion)|distressed|threw|hit the|struck|paced|pacing|escalat(?:ion|ed)|cried|raised (?:his|her|their) voice)\b/i],
   ['COMMUNICATION', /\b(communication (?:device|board)|used sign language|using gestures|verbally (?:asked|requested)|responded to (?:verbal|questions)|spoke with|told (?:sw|staff)|expressed a request)\b/i],
-  ['OBSERVATION', /\b(observed|noticed|found|fault|damaged|indicator|window|door|equipment|maintenance|gate)\b/i],
+  ['OBSERVATION', /\b(?:damaged|broken|faulty|malfunctioning|hazard|unsafe|equipment fault|maintenance issue|wet floor|smoke alarm)\b/i],
   ['CLIENT SUPPORT', /\b(breakfast|lunch|dinner|dishes|laundry|clothes|shower|hair|teeth|face|household|cleaned|kitchen|meals?|sandwich|exercise|personal care|independently|bathroom)\b/i]
 ];
 
@@ -194,9 +194,9 @@ export function classifyStatement(text, model = localModel) {
     return {section:'CLIENT SUPPORT',method:'choice-safeguard',confidence:1};
   }
   const pred = model.predict(sentence);
-  if (pred.confidence < .55) return {section:'OBSERVATION',method:'uncertain-model',confidence:pred.confidence,
+  if (pred.confidence < .55) return {section:'CLIENT SUPPORT',method:'uncertain-model',confidence:pred.confidence,
     suggestion:pred.label};
-  return {section:pred.label,method:'local-model',confidence:pred.confidence};
+  return {section:pred.label==='OBSERVATION' ? 'CLIENT SUPPORT' : pred.label,method:'local-model',confidence:pred.confidence};
 }
 
 function canonicalText(text) {
@@ -299,7 +299,7 @@ export function generateNotes({participant='',raw=''}={}) {
     const section=(row.heading && row.heading!=='CLIENT NAME') ? row.heading : decision.section;
     classificationMethods[decision.method]=(classificationMethods[decision.method]||0)+1;
     sections[section].push({...item,text:output,edited:false,classification:decision});
-    if(decision.method==='uncertain-model') warnings.push('Uncertain heading for: '+output+' Review classification.');
+    if(decision.method==='uncertain-model') warnings.push('Uncertain category (temporarily under CLIENT SUPPORT): '+output+' Review and move if needed.');
     if(/\b(?:administered|missed)\b.{0,30}\bmedication\b|\bmedication\b.{0,30}\b(?:administered|missed)\b/i.test(item.source)) {
       warnings.push('Medication-related statement: check the authorised medication documentation process.');
     }
