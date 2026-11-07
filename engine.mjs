@@ -163,9 +163,29 @@ const RULES = [
   ['CLIENT SUPPORT', /\b(breakfast|lunch|dinner|dishes|laundry|clothes|shower|hair|teeth|face|household|cleaned|kitchen|meals?|sandwich|exercise|personal care|independently|bathroom)\b/i]
 ];
 
+// Narrow, evidence-based distinctions before general keyword matching.
+const PRECISE_RULES = [
+ ['MEDICAL', /\b(administered (?:his|her|their|the)?\s*medication|medication|medications|medical appointment|doctor|gp appointment|nurse|pharmacist|prescribed|foot therapy|wound care|blood glucose)\b/i],
+ ['GOAL', /\b(goal|goal-directed|goal related|goal-linked|goal progress|towards independence objective)\b/i],
+ ['COMMUNICATION', /\b(asked for|requested|requesting|communicated|communication device|spoke to|spoke with|told staff|expressed|verbalised|gestured|sign language)\b/i],
+ ['ACTIVE SUPPORT', /\b(sw|support worker|staff)\s+(?:helped|assisted|prompted|supported|guided|encouraged|reminded|modelled|offered choices)\b/i],
+ ['ACTIVE SUPPORT', /\b(with (?:staff|sw|support worker) (?:assistance|support|prompting)|verbal prompts|physical prompts|hand.over.hand)\b/i],
+ ['COMMUNITY PARTICIPATION', /\b(attended|visited|went to|participated in|did not attend)\s+(?:a |the |his |her |their )?(?:bowling|club strike|day options|day programme|community|library|outing|event|shopping|supermarket|park|swimming|centre|group activity)\b/i],
+ ['HEALTH', /\b(flu|unwell|fever|cough|headache|nausea|runny nose|fatigue|sick|ill|pain|sleeping poorly|rested due to illness)\b/i],
+ ['BEHAVIOUR', /\b(shouted|threw|hit|struck|paced repeatedly|agitated|escalated|cried|distressed)\b/i]
+];
 export function classifyStatement(text, model = localModel) {
   const sentence = String(text).trim();
   if (!sentence) return {section:'OBSERVATION',method:'empty',confidence:0};
+  // A refusal by itself is a choice, not a behaviour incident.
+  if (/\b(refused|declined|chose not|did not want)\b/i.test(sentence) && !/\b(shouted|hit|struck|threw|escalated)\b/i.test(sentence)) {
+    if (/\b(medication|medicine|tablets|dose)\b/i.test(sentence)) return {section:'MEDICAL',method:'choice-medical',confidence:1};
+    if (/\b(community|day options|programme|bowling|outing)\b/i.test(sentence)) return {section:'COMMUNITY PARTICIPATION',method:'choice-community',confidence:1};
+    return {section:'CLIENT SUPPORT',method:'choice-safeguard',confidence:1};
+  }
+  for (const [section, regex] of PRECISE_RULES) {
+    if (regex.test(sentence)) return {section,method:'precise-rule',confidence:1};
+  }
   for (const [section, regex] of RULES) {
     if (regex.test(sentence)) return {section,method:'priority-rule',confidence:1};
   }
