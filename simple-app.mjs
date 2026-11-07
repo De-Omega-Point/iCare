@@ -9,9 +9,16 @@ function parse(text){
  const first=lines.findIndex(line=>line.trim().length>0);
  if(first<0)return {participant:'',raw:''};
  const line=lines[first].trim();
- const match=line.match(/^(?:CLIENT NAME|NAME|PARTICIPANT)\s*:\s*(.*)$/i);
- const participant=(match?match[1]:line).trim();
- lines.splice(first,1);
+ let participant='';
+ if(/^CLIENT NAME\s*:?$/i.test(line)){
+   const next=lines.findIndex((value,index)=>index>first&&value.trim());
+   if(next>=0){participant=lines[next].trim().replace(/^[•*–-]\s*/,'').replace(/\.$/,'');lines.splice(next,1);}
+   lines.splice(first,1);
+ }else{
+   const match=line.match(/^(?:CLIENT NAME|NAME|PARTICIPANT)\s*:\s*(.*)$/i);
+   participant=(match?match[1]:line).trim();
+   lines.splice(first,1);
+ }
  return {participant,raw:lines.join('\n').trim()};
 }
 function generate(){const raw=input.value.trim();if(!raw){say('Enter your shift notes first.');input.focus();return;}const parsed=parse(raw);if(!parsed.participant){say('Put the client’s name on the first line.');return;}if(!parsed.raw){say('Add shift observations below the client’s name.');return;}try{const draft=generateNotes(parsed);output.value=exportAll(draft.sections);showWarnings(draft.warnings);reviewed=false;copy.disabled=false;say('Draft generated locally. Check every statement and edit before copying.');output.focus();}catch(e){say('Unable to format notes. Check your input.');}}
