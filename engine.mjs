@@ -264,6 +264,21 @@ export function classifySections(text, model = localModel) {
   // A refusal alone is never categorised as a behavioural incident.
   return {sections: SECTION_ORDER.filter(label=>sections.includes(label)), primary};
 }
+// Strip pasted iCare headings and empty placeholders, retaining explicit section context.
+export function parseShiftLines(raw) {
+  const headings = new Set(SECTION_ORDER);
+  const rows = [];
+  let heading = null;
+  for (const line of String(raw).split(/\r?\n/)) {
+    const cleaned = line.trim().replace(/^[•*–-]\s*/, '').trim();
+    if (!cleaned) continue;
+    const label = cleaned.replace(/[:.]\s*$/, '').toUpperCase();
+    if (headings.has(label)) { heading = label; continue; }
+    if (/^(?:nil|n\/a|none|not applicable)\.?$/i.test(cleaned)) continue;
+    rows.push({text:cleaned,heading});
+  }
+  return rows;
+}
 export function generateNotes({participant='',raw=''}={}) {
   if (raw.length>14000) throw new Error('Input exceeds 14,000 characters. Split the shift into shorter entries.');
   const sections=Object.fromEntries(SECTION_ORDER.map(x=>[x,[]]));
@@ -273,19 +288,24 @@ export function generateNotes({participant='',raw=''}={}) {
   if (participantName) sections['CLIENT NAME'].push({text:formatSentence(participantName),source:participantName,start:null,end:null,edited:false});
   else warnings.push('No participant name supplied. Confirm the correct record before pasting.');
   let classificationMethods={};
-  for(const item of splitStatements(raw)) {
+  for(const row of parseShiftLines(raw)) {
+    if(row.heading==='CLIENT NAME') continue;
+    for(const item of splitStatements(row.text)) {
     const output=formatSentence(item.source), key=normalized(output);
+    if(SECTION_ORDER.includes(output.replace(/[.!?]$/,'').toUpperCase())) continue;
     if(seen.has(key)) {warnings.push('Repeated statement was omitted: '+output);continue;}
     seen.add(key);
-    const {sections: matched,primary:decision}=classifySections(item.source);
+    const {primary:decision}=classifySections(item.source);
+    const section=(row.heading && row.heading!=='CLIENT NAME') ? row.heading : decision.section;
     classificationMethods[decision.method]=(classificationMethods[decision.method]||0)+1;
-    for (const section of matched) sections[section].push({...item,text:output,edited:false,classification:decision});
+    sections[section].push({...item,text:output,edited:false,classification:decision});
     if(decision.method==='uncertain-model') warnings.push('Uncertain heading for: '+output+' Review classification.');
     if(/\b(?:administered|missed)\b.{0,30}\bmedication\b|\bmedication\b.{0,30}\b(?:administered|missed)\b/i.test(item.source)) {
       warnings.push('Medication-related statement: check the authorised medication documentation process.');
     }
     if(/\b(?:incident|injur(?:y|ies)|fall|fell|fallen|slipped|tripped|police|ambulance)\b/i.test(item.source)) {
       warnings.push('Potential incident-related statement: check the provider reporting procedure separately.');
+    }
     }
   }
   if(!raw.trim()) warnings.push('No shift observations supplied.');
