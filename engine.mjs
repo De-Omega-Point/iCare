@@ -298,7 +298,9 @@ export function generateNotes({participant='',raw=''}={}) {
     if(seen.has(key)) {warnings.push('Repeated statement was omitted: '+output);continue;}
     seen.add(key);
     const {primary:decision}=classifySections(item.source);
-    // Never trust a pasted heading as a classification: old exports may contain\n    // headings and misplaced facts under OBSERVATION. Reclassify each statement.\n    const section=decision.section;
+    // Never trust a pasted heading as a classification: old exports may contain
+    // headings and misplaced facts under OBSERVATION. Reclassify each statement.
+    const section=decision.section;
     classificationMethods[decision.method]=(classificationMethods[decision.method]||0)+1;
     sections[section].push({...item,text:output,edited:false,classification:decision});
     if(decision.method==='uncertain-model') warnings.push('Uncertain category (temporarily under CLIENT SUPPORT): '+output+' Review and move if needed.');
