@@ -247,6 +247,23 @@ export function validateBullet(bullet) {
   }
   return {level:'linked',reason:'Derived from the linked source statement; human review still required.'};
 }
+// A source statement can support more than one heading when it explicitly
+// contains evidence for each. No inferred actions or rewritten claims.
+export function classifySections(text, model = localModel) {
+  const primary = classifyStatement(text, model);
+  const sections = [primary.section];
+  const sentence = String(text);
+  const add = (label, pattern) => { if (pattern.test(sentence) && !sections.includes(label)) sections.push(label); };
+  add('ACTIVE SUPPORT', /\b(?:sw|support worker|staff|carer)\s+(?:supported|assisted|prompted|guided|encouraged|reminded|helped|modelled|offered choices)\b|\b(?:with|through)\s+(?:sw|staff|support worker|carer)\s+(?:support|assistance|prompting)\b/i);
+  add('COMMUNITY PARTICIPATION', /\b(?:bowling|club strike|day options|day programme|community (?:event|outing|centre)|library|supermarket|shopping|swimming centre|group activity|outing)\b/i);
+  add('COMMUNICATION', /\b(?:asked for|requested|requesting|communicated|spoke (?:to|with)|told (?:sw|staff)|expressed (?:a|his|her|their)?\s*(?:choice|preference|request)|gestured|sign language)\b/i);
+  add('MEDICAL', /\b(?:medication|medicine|tablets|dose|pharmacist|wound care|medical appointment)\b/i);
+  add('HEALTH', /\b(?:flu|fever|unwell|cough|headache|nausea|fatigue|pain)\b/i);
+  // A stated goal is required. Participation alone does not prove goal progress.
+  add('GOAL', /\b(?:identified|agreed|documented|stated|support plan)\s+goal\b|\bprogress towards .{0,25}goal\b/i);
+  // A refusal alone is never categorised as a behavioural incident.
+  return {sections: SECTION_ORDER.filter(label=>sections.includes(label)), primary};
+}
 export function generateNotes({participant='',raw=''}={}) {
   if (raw.length>14000) throw new Error('Input exceeds 14,000 characters. Split the shift into shorter entries.');
   const sections=Object.fromEntries(SECTION_ORDER.map(x=>[x,[]]));
@@ -260,9 +277,9 @@ export function generateNotes({participant='',raw=''}={}) {
     const output=formatSentence(item.source), key=normalized(output);
     if(seen.has(key)) {warnings.push('Repeated statement was omitted: '+output);continue;}
     seen.add(key);
-    const decision=classifyStatement(item.source);
+    const {sections: matched,primary:decision}=classifySections(item.source);
     classificationMethods[decision.method]=(classificationMethods[decision.method]||0)+1;
-    sections[decision.section].push({...item,text:output,edited:false,classification:decision});
+    for (const section of matched) sections[section].push({...item,text:output,edited:false,classification:decision});
     if(decision.method==='uncertain-model') warnings.push('Uncertain heading for: '+output+' Review classification.');
     if(/\b(?:administered|missed)\b.{0,30}\bmedication\b|\bmedication\b.{0,30}\b(?:administered|missed)\b/i.test(item.source)) {
       warnings.push('Medication-related statement: check the authorised medication documentation process.');
