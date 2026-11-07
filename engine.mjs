@@ -183,6 +183,7 @@ export function classifyStatement(text, model = localModel) {
     if (/\b(community|day options|programme|bowling|outing)\b/i.test(sentence)) return {section:'COMMUNITY PARTICIPATION',method:'choice-community',confidence:1};
     return {section:'CLIENT SUPPORT',method:'choice-safeguard',confidence:1};
   }
+  if (/\b(?:reviewed|read|checked|updated)\b.{0,45}\b(?:communication book|progress notes|shift notes|handover notes)\b/i.test(sentence)) return {section:'CLIENT SUPPORT',method:'documentation-rule',confidence:1};
   for (const [section, regex] of PRECISE_RULES) {
     if (regex.test(sentence)) return {section,method:'precise-rule',confidence:1};
   }
