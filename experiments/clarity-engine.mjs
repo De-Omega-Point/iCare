@@ -16,7 +16,7 @@ export function extract(raw) {
     const line=clean(original);
     if(!line) continue;
     const heading=headingOf(line);
-    if(heading) {currentHeading=heading;first=false;continue;}
+    if(heading) {if(!/^\s*[•*–-]/.test(original)) currentHeading=heading;first=false;continue;}
     if(NIL.test(line)) continue;
     if(currentHeading==='CLIENT NAME') {
       if(!name) name=line.replace(/[.]$/,'');
